@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastAPI-Chat-app</title>
+    <link rel="stylesheet" href="/frontend/static/index.css">
+</head>
+<body>
+    <div class="chat-app">
+        <aside class="sidebar">
+            <header class="sidebar-header">Chats</header>
+            <ul class="chat-list">
+                <li class="chat-item">
+                    <img src="assets/default-profile-icon.jpg" class="avatar">
+                    <div class="chat-info">
+                        <span class="chat-name">Alice401</span>
+                        <span class="recent-msg">Hello</span>
+                    </div>
+                </li>
+                <li class="chat-item">
+                    <img src="assets/default-profile-icon.jpg" class="avatar">
+                    <div class="chat-info">
+                        <span class="chat-name">User2</span>
+                        <span class="recent-msg">Hello</span>
+                    </div>
+                </li>
+            </ul>
+        </aside>
+        <div class="chat-container">
+            <div class="chat-title">
+                <img src="assets/default-profile-icon.jpg" class="avatar">
+                <h2>Alice401</h2>
+                <button class="options-button">⋮</button>
+            </div>
+            <div class="messages">
+                <div class="message received">
+                    <span class="text">Hello! How are you?</span>
+                    <span class="time">10:01 AM</span>
+                </div>
+                <div class="message sent">
+                    <span class="text">Hey! I'm good, thanks. What about you?</span>
+                    <span class="time">10:02 AM</span>
+                </div>
+                <div class="message received">
+                    <span class="text">Doing great! Ready for the project discussion?</span>
+                    <span class="time">10:03 AM</span>
+                </div>
+            </div>
+            <div class="chat-input">
+                <button class="emoji"><img src="assets/emoji-icon-image.png"></button>
+                <input type="text" placeholder="Type a message">
+                <button class="send-btn">Send</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
