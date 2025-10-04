@@ -23,11 +23,22 @@ class ChatBase(BaseModel):
     type: str
 class CreateChat(ChatBase):
     name: Optional[str] = None
-    admin_id: int
-    pass
+    admin_id: Optional[int] = None
 
 class UpdateChat(BaseModel):
     name: Optional[str] = None
+
+class ContactDetail(BaseModel):
+    username: Optional[str] = None
+    profile_pic: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
+
+class ChatSchemaWithContact(BaseModel):
+    id: int
+    name: Optional[str] = None
+    type: str
+    contact: Optional[ContactDetail] = None 
+    model_config = ConfigDict(from_attributes=True)
 
 class ChatSchema(ChatBase):
     id: Optional[int]

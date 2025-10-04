@@ -1,67 +1,136 @@
 const API_URL = "http://127.0.0.1:8000";
-const token = localStorage.getItem("token");
+const token = localStorage.getItem("token")
 
 if (!token) {
+    alert("Not authorized. Please login");
     window.location.href = "login.html";
 }
 
-async function loadChats() {
-    const res = await fetch(`${API_URL}/chats`, {
-        headers: { "Authorization": `Bearer ${token}` }
+const chatTitleHeader = document.querySelector('.chat-title h2');
+const chatTitleAvatar = document.querySelector('.chat-title .avatar');
+
+let currentUserId = null;
+
+async function getUserId() {
+    if (currentUserId !== null) {
+        return currentUserId;
+    }
+    const res = await fetch(`${API_URL}/user/users/me`, {
+        headers: {"Authorization": `Bearer ${token}`}
     });
 
-    const chats = await res.json();
-    const chatList = document.getElementById("chat-list");
-    chatList.innerHTML = "";
-
-    chats.forEach(chat => {
-        const li = document.createElement("li");
-        li.classList.add("chat-item");
-        li.textContent = chat.name || "Personal Chat";
-        li.onclick = () => loadMessages(chat.id, chat.name);
-        chatList.appendChild(li);
-    });
+    if (!res.ok) {
+        alert("You are not logged in.");
+        window.location.href = "login.html";
+        return null;
+    }
+    else {
+        const user = await res.json();
+        currentUserId = user.id;
+        return currentUserId;
+    }
 }
 
-async function loadMessages(chatId, chatName) {
-    document.getElementById("chat-title").textContent = chatName;
+async function loadMessages(chatId, chatName, profileUrl = "assets/default-profile-icon.jpg") {
+    chatTitleHeader.textContent = chatName;
+    chatTitleAvatar.src = profileUrl;
 
     const res = await fetch(`${API_URL}/chats/${chatId}/messages`, {
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: {"Authorization": `Bearer ${token}`}
     });
+    
+    if (!res.ok) {
+        console.error("Failed to load messages:", res.status, res.statusText);
+        return;
+    }
 
     const messages = await res.json();
-    const messagesDiv = document.getElementById("messages");
-    messagesDiv.innerHTML = "";
+    const messageDiv = document.getElementById("messages");
+    messageDiv.innerHTML = "";
+
+    const userId = await getUserId();
 
     messages.forEach(msg => {
         const div = document.createElement("div");
         div.classList.add("message");
-        div.classList.add(msg.sender_id === getUserId() ? "sent" : "received");
-        div.textContent = msg.content;
-        messagesDiv.appendChild(div);
+        div.classList.add(msg.sender_id === userId ? "sent" : "received");
+
+        const textSpan = document.createElement("span");
+        textSpan.classList.add("text");
+        textSpan.textContent = msg.content;
+        
+        const timeSpan = document.createElement("span");
+        timeSpan.classList.add("time");
+        const date = new Date(msg.created_at);
+        timeSpan.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        div.appendChild(textSpan);
+        div.appendChild(timeSpan);
+
+        messageDiv.appendChild(div);
     });
 }
 
-document.getElementById("chat-form")?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const input = document.getElementById("message-input");
-    const content = input.value;
-    const chatId = document.getElementById("chat-title").dataset.chatId;
-
-    const res = await fetch(`${API_URL}/chats/${chatId}/messages`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ content })
+async function loadContacts() {
+    const res = await fetch(`${API_URL}/chats/contacts`, {
+        headers: {"Authorization": `Bearer ${token}`}
     });
-
-    if (res.ok) {
-        input.value = "";
-        loadMessages(chatId, document.getElementById("chat-title").textContent);
+    
+    if (!res.ok) {
+        console.error("Failed to load contacts:", res.status, res.statusText);
+        chatTitleHeader.textContent = "Error loading chats";
+        return;
     }
-});
 
-document.addEventListener("DOMContentLoaded", loadChats);
+    const chats = await res.json();
+    const chatList = document.getElementById("chat-list");
+    chatList.innerHTML = "";
+    
+    let firstChatLoaded = false;
+
+    chats.forEach(chat => {
+        let displayName = chat.name || "Group Chat";
+        let profileUrl = "assets/default-profile-icon.jpg";
+
+        if (chat.type === "personal" && chat.contact) {
+            displayName = chat.contact.username;
+            if (chat.contact.profile_pic) {
+                profileUrl = chat.contact.profile_pic;
+            }
+        }
+        
+        if (!firstChatLoaded) {
+            loadMessages(chat.id, displayName, profileUrl);
+            firstChatLoaded = true;
+        }
+
+        const chatItem = document.createElement("li");
+        chatItem.classList.add("chat-item");
+        
+        const avatar = document.createElement("img");
+        avatar.classList.add("avatar");
+        avatar.src = profileUrl;
+        chatItem.appendChild(avatar);
+
+        const chatInfo = document.createElement("div");
+        chatInfo.classList.add("chat-info");
+
+        const chatName = document.createElement("span");
+        chatName.classList.add("chat-name");
+        chatName.textContent = displayName;
+        
+        const recentMsg = document.createElement("span");
+        recentMsg.classList.add("recent-msg");
+        recentMsg.textContent = "Click to chat";
+
+        chatInfo.appendChild(chatName);
+        chatInfo.appendChild(recentMsg);
+
+        chatItem.appendChild(chatInfo);
+
+        chatItem.onclick = () => loadMessages(chat.id, displayName, profileUrl);
+
+        chatList.appendChild(chatItem);
+    });
+}
+document.addEventListener("DOMContentLoaded", loadContacts);

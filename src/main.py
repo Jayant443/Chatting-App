@@ -19,7 +19,7 @@ app = FastAPI(title="chat app", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5500"],
+    allow_origins=["http://localhost:5500", "http://127.0.0.1:5500"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -27,13 +27,6 @@ app.add_middleware(
 
 app.include_router(user_router, prefix=f"/user", tags = ["users"])
 app.include_router(chat_router, prefix=f"/chats", tags = ["chats"])
-
-
-# templates = Jinja2Templates(directory="frontend/templates")
-# app.mount("/scripts", StaticFiles(directory="frontend/scripts"), name="scripts")
-# app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
-
-# app.include_router(message_router)
 
 @app.get("/")
 async def read_root(request: Request):

@@ -3,6 +3,7 @@ from typing import List, Optional
 from src.core.database import get_session
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from .crud import CrudChat
+from src.users.crud import CrudUser
 from src.users.models import User
 from src.auth.dependencies import get_current_user
 from .schema import (
@@ -15,12 +16,14 @@ from .schema import (
                 ChatMemberSchema,
                 ChatBase,
                 MessageBase, 
-                ChatMemberBase
+                ChatMemberBase,
+                ContactDetail,
+                ChatSchemaWithContact
             )
 
 chat_router = APIRouter()
 chat_crud = CrudChat()
-
+user_crud = CrudUser()
 
 @chat_router.post("/chats")
 async def create_group_chat(chat: CreateChat, session: AsyncSession = Depends(get_session)):
@@ -56,10 +59,21 @@ async def leave_chat(chat_member: ChatMemberBase, session: AsyncSession = Depend
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Something went wrong")
     return left
 
-@chat_router.get("/", response_model=List[ChatSchema])
+@chat_router.get("/contacts", response_model=List[ChatSchema])
 async def get_my_chats(current_user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
     chats = await chat_crud.get_all_user_chats(current_user.id, session)
-    return chats
+    response_list: List[ChatSchemaWithContact] = []
+    for chat in chats:
+        chat_data = ChatSchemaWithContact.model_validate(chat)
+        if chat.type == "personal":
+            chat_members = await chat_crud.get_chat_members(chat.id, session)
+            other_member = next((m for m in chat_members if m.user_id != current_user.id), None)
+            if other_member:
+                other_user = await user_crud.get_user_by_id(other_member.user_id, session)
+                if other_user:
+                    chat_data.contact = ContactDetail.model_validate(other_user)
+        response_list.append(chat_data)
+    return response_list
 
 @chat_router.get("/{chat_id}/messages", response_model=List[MessageSchema])
 async def get_chat_messages(chat_id: int, current_user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):

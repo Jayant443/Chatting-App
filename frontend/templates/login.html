@@ -8,18 +8,46 @@
 </head>
 <body>
     <div class="form-box">
-    <form class="form">
-        <span class="title">Login</span>
-        <span class="subtitle">Welcome Back!</span>
-        <div class="form-container">
-            <input type="text" class="input" placeholder="Username/Email">
-            <input type="password" class="input" placeholder="Password">
-        </div>
-        <button>Login</button>
-    </form>
-        <div class="form-section">
-            <p>Don't have an account? <a href="">SignUp</a> </p>
-        </div>
+        <form class="form" id="login-form">
+            <span class="title">Login</span>
+            <span class="subtitle">Welcome Back!</span>
+            <div class="form-container">
+                <input type="text" class="input" id="username" placeholder="Username/Email">
+                <input type="password" class="input" id="password" placeholder="Password">
+            </div>
+            <button type="submit">Login</button>
+        </form>
+            <div class="form-section">
+                <p>Don't have an account? <a href="">SignUp</a> </p>
+            </div>
     </div>
+    <script>
+        const API_URL="http://127.0.0.1:8000";
+
+        loginForm = document.getElementById("login-form");
+        loginForm.addEventListener("submit", async(e) => {
+            e.preventDefault();
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            const formData = new URLSearchParams();
+            formData.append("username", username);
+            formData.append("password", password);
+
+            const res = await fetch(`${API_URL}/user/token`, {
+                method: "POST",
+                headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                body: formData.toString()
+            });
+            if (res.ok) {
+                const data = await res.json();
+                localStorage.setItem("token", data.access_token);
+                window.location.href = "index.html";
+            }
+            else {
+                alert("Login Failed");
+            }
+        });
+    </script>
 </body>
 </html>

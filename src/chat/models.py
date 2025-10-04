@@ -21,7 +21,7 @@ class Chat(SQLModel, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
     created_at: datetime = Field(sa_column=Column(DateTime, server_default=text("CURRENT_TIMESTAMP")))
-    name: str
+    name: Optional[str] = None
     admin_id: Optional[int] = None
     type: str = Field(default="personal")
 

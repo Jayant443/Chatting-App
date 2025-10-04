@@ -51,4 +51,8 @@ class CrudUser:
         await session.commit()
         return True
     
+    async def get_user_by_id(self, user_id: int, session: AsyncSession) -> Optional[User]:
+        result = await session.exec(select(User).where(User.id==user_id))
+        user = result.first()
+        return user
     
