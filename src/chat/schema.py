@@ -33,6 +33,9 @@ class ContactDetail(BaseModel):
     profile_pic: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
 
+class AddContactrequest(BaseModel):
+    email: str
+
 class ChatSchemaWithContact(BaseModel):
     id: int
     name: Optional[str] = None

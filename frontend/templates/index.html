@@ -9,7 +9,13 @@
 <body>
     <div class="chat-app">
         <aside class="sidebar">
-            <header class="sidebar-header">Chats</header>
+            <header class="sidebar-header">Chats
+                <button id="add-contact">+</button>
+            </header>
+            <div class="add-contact-form">
+                <input id="add-contact-input" type="text" placeholder="Enter email">
+                <button type="submit" id="add-contact-submit-btn">Add</button>
+            </div>
             <ul class="chat-list" id="chat-list">
             </ul>
         </aside>
@@ -21,9 +27,9 @@
             </div>
             <div class="messages" id="messages">
             </div>
-            <div class="chat-input">
+            <div class="chat-input" id="chat-input">
                 <button class="emoji"><img src="assets/emoji-icon-image.png"></button>
-                <input type="text" placeholder="Type a message">
+                <input id="message-input" type="text" placeholder="Type a message">
                 <button class="send-btn">Send</button>
             </div>
         </div>

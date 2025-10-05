@@ -32,10 +32,6 @@ class CrudChat:
         return new_chat
 
     async def create_personal_chat(self, user1_id: int, user2_id: int, session: AsyncSession) -> Chat:
-        result = await session.exec(select(Chat).join(ChatMember).where(Chat.type == "personal").where(ChatMember.user_id.in_[user1_id, user2_id]))
-        existing = result.all()
-        if existing and len(existing) == 2:
-            return existing[0]
         new_chat = Chat(name=None, type="personal")
         session.add(new_chat)
         await session.commit()

@@ -18,7 +18,8 @@ from .schema import (
                 MessageBase, 
                 ChatMemberBase,
                 ContactDetail,
-                ChatSchemaWithContact
+                ChatSchemaWithContact,
+                AddContactrequest
             )
 
 chat_router = APIRouter()
@@ -45,6 +46,18 @@ async def add_members(chat_member: CreateChatMember, session: AsyncSession = Dep
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Something went wrong")
     return member
 
+@chat_router.post("/contact/add", response_model=ChatSchemaWithContact, status_code=status.HTTP_201_CREATED)
+async def add_contact_by_email(request_data: AddContactrequest, current_user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
+    target_user = await user_crud.get_user_by_email(request_data.email, session)
+    if target_user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User with this email not found.")
+    user1_id = current_user.id
+    user2_id = target_user.id
+    new_chat = await chat_crud.create_personal_chat(user1_id, user2_id, session)
+    chat_data = ChatSchemaWithContact.model_validate(new_chat)
+    chat_data.contact = ContactDetail.model_validate(target_user)
+    return chat_data
+
 @chat_router.delete("/chats/{chat_id}/members/{user_id}")
 async def remove_member(chat_id: int, user_id: int, admin_id: int, session: AsyncSession = Depends(get_session)):
     chat_deleted = await chat_crud.remove_member_from_chat(chat_id, user_id, admin_id, session)
@@ -59,7 +72,7 @@ async def leave_chat(chat_member: ChatMemberBase, session: AsyncSession = Depend
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Something went wrong")
     return left
 
-@chat_router.get("/contacts", response_model=List[ChatSchema])
+@chat_router.get("/contacts", response_model=List[ChatSchemaWithContact])
 async def get_my_chats(current_user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
     chats = await chat_crud.get_all_user_chats(current_user.id, session)
     response_list: List[ChatSchemaWithContact] = []

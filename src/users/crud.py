@@ -25,6 +25,10 @@ class CrudUser:
     async def get_user(self, username: str, session: AsyncSession) -> Optional[User]:
         result = await session.exec(select(User).where(User.username == username))
         return result.first()
+    
+    async def get_user_by_email(self, email: str, session: AsyncSession) -> Optional[User]:
+        result = await session.exec(select(User).where(User.email==email))
+        return result.first()
 
     async def update_user(self, session: AsyncSession, user: UpdateUser) -> Optional[User]:
         result = await session.exec(select(User).where(User.username == user.username))

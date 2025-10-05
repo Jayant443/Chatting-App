@@ -17,5 +17,4 @@ class UpdateUser(BaseModel):
 
 class UserSchema(UserBase):
     id: int
-    password: str
     model_config = ConfigDict(from_attributes=True)

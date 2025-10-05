@@ -24,11 +24,15 @@ body {
   display: flex;
   flex-direction: column;
   border-right: 1px solid #2c2c2c;
+  gap: 1%;
 }
 
 .sidebar-header {
   font-size: 1.5rem;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-family: Arial, Helvetica, sans-serif;
   background-color: #0d0d0d;
   padding: 15px;
@@ -36,6 +40,57 @@ body {
   color: #ffffff;
   border-bottom: 1px solid #2c2c2c;
   text-align: center;
+}
+
+#add-contact {
+  background-color: #0d0d0d;
+  border: none;
+  color: rgb(212, 212, 212);
+  font-size: 1.3rem;
+  width: 10%;
+  height: 100%;
+  border-radius: 7px;
+}
+
+#add-contact:hover {
+  background-color: rgb(75, 75, 75);
+}
+
+.sidebar .add-contact-form {
+  display: flex;
+  padding: 3%;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #0d0d0d;
+  border-bottom: 1px solid #2c2c2c;
+  height: 7%;
+  display: none;
+}
+
+#add-contact-input {
+  background-color: #2e2e2e;
+  border: none;
+  font-size: 110%;
+  color: rgb(196, 196, 196);
+  height: 100%;
+  width: 70%;
+  padding: 1%;
+}
+
+#add-contact-submit-btn {
+  background-color: #1a7ca3;
+  border: none;
+  font-size: 110%;
+  width: 20%;
+  height: 100%;
+  border-radius: 9px;
+}
+
+#add-contact-submit-btn:hover {
+  background-color: #1e98c9;
+}
+#add-contact-submit-btn:active {
+  background-color: #1d6683;
 }
 
 .chat-list {
@@ -182,6 +237,16 @@ body {
   color: #e0e0e0;
   align-self: flex-start;
   border-bottom-left-radius: 3px;
+}
+
+.message.system {
+  background-color: #428169;
+  border-radius: 5px;
+  color: #ffffff;
+  align-self: center;
+  font-size: 0.85rem;
+  padding: 5px 15px;
+  max-width: fit-content;
 }
 
 .message .time {
