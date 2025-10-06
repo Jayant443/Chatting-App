@@ -10,7 +10,6 @@
     <div class="chat-app">
         <aside class="sidebar">
             <header class="sidebar-header">Chats
-                <button id="add-contact">+</button>
             </header>
             <div class="add-contact-form">
                 <input id="add-contact-input" type="text" placeholder="Enter email">
@@ -24,6 +23,11 @@
                 <img src="assets/default-profile-icon.jpg" class="avatar">
                 <h2></h2>
                 <button class="options-button">⋮</button>
+                <div class="options-menu">
+                    <button class="menu-option" id="add-contact">New Contact</button>
+                    <button class="menu-option" id="view-profile">Profile</button>
+                    <button class="menu-option" id="logout-btn">Logout</button>
+                </div>
             </div>
             <div class="messages" id="messages">
             </div>

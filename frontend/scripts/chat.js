@@ -19,6 +19,29 @@ let currentUserId = null;
 let currentChatId = null;
 let chatWebsocket = null;
 
+
+const optionsMenu = document.querySelector(".options-menu");
+const optionsBtn = document.querySelector(".options-button");
+const logoutBtn = document.getElementById("logout-btn");
+
+
+function handleDocumentClick(event) {
+    const isClickInsideOptions = optionsMenu.contains(event.target) || optionsBtn.contains(event.target);
+    const isClickInsideAddContactForm = addContactForm.contains(event.target) || addContactBtn.contains(event.target);
+    
+    if (!isClickInsideOptions && optionsMenu.style.display !== "none") {
+        optionsMenu.style.display = "none";
+    }
+
+    if (!isClickInsideAddContactForm && addContactForm.style.display === "flex") {
+        addContactForm.style.display = "none";
+    }
+}
+
+async function toggleOptions() {
+    optionsMenu.style.display = optionsMenu.style.display ==="none" ? "grid" : "none";
+}
+
 function toggleAddContact() {
     addContactForm.style.display = addContactForm.style.display==="none" ? "flex" : "none";
 }
@@ -41,7 +64,7 @@ async function addContact() {
         body: body
     });
     if (res.ok) {
-        const newchat = await res.json();
+        const newChat = await res.json();
         addContactInput.value = '';
         toggleAddContactForm(); 
         await loadContacts();
@@ -139,7 +162,7 @@ async function connectWebsocket(chatId) {
         chatWebsocket.close();
     }
 
-    const wsUrl = `ws://127.0.0.1:8000/ws/${chatId}?token=${token}`;
+    const wsUrl = `ws://127.0.0.1:8000/chats/ws/${chatId}?token=${token}`;
     chatWebsocket = new WebSocket(wsUrl);
 
     chatWebsocket.onopen = () => {
@@ -238,25 +261,34 @@ async function loadContacts() {
     });
 }
 
+async function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "/frontend/templates/login.html";
+}
 
 
-document.addEventListener("DOMContentLoaded", () => {
-    getUserId();
-    loadContacts();
+document.addEventListener("DOMContentLoaded", async () => {
+    const userId = await getUserId();
+    
+    if (userId) {
+        loadContacts();
+    }
 
     document.querySelector(".chat-input .send-btn").addEventListener("click", sendMessage);
+    optionsBtn.addEventListener("click", toggleOptions);
     addContactBtn.addEventListener("click", toggleAddContact);
     addContactSubmitBtn.addEventListener("click", addContact);
-
+    logoutBtn.addEventListener("click", logout);
+    document.addEventListener("click", handleDocumentClick);
     addContactInput.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
+            e.preventDefault(); 
             addContact();
         }
     });
-
     document.querySelector('.chat-input input[type="text"]').addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             sendMessage();
         }
     });
-}); 
+});

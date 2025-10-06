@@ -32,6 +32,8 @@ app.add_middleware(
 
 app.include_router(user_router, prefix=f"/user", tags = ["users"])
 app.include_router(chat_router, prefix=f"/chats", tags = ["chats"])
+app.include_router(message_router, prefix="/chats")
+
 
 
 @app.get("/")

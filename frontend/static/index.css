@@ -42,18 +42,35 @@ body {
   text-align: center;
 }
 
-#add-contact {
-  background-color: #0d0d0d;
-  border: none;
-  color: rgb(212, 212, 212);
-  font-size: 1.3rem;
-  width: 10%;
-  height: 100%;
-  border-radius: 7px;
+.options-menu {
+    position: absolute;
+    top: 55px; 
+    right: 15px;
+    width: 150px;
+    background-color: #2c2c2c;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    z-index: 100;
+    padding: 5px 0;
+    display: none;
 }
 
-#add-contact:hover {
-  background-color: rgb(75, 75, 75);
+.options-menu .menu-option {
+    display: block;
+    width: 100%;
+    padding: 10px 15px;
+    text-align: left;
+    background: none;
+    border: none;
+    color: #e0e0e0;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+
+.options-menu .menu-option:hover {
+    background-color: #4a92ff;
+    color: #ffffff;
 }
 
 .sidebar .add-contact-form {
@@ -226,14 +243,14 @@ body {
 }
 
 .message.sent {
-  background-color: #1a7ca3;
+  background-color: #155c79;
   color: #fff;
   align-self: flex-end;
   border-bottom-right-radius: 3px;
 }
 
 .message.received {
-  background-color: #1e1e1e;
+  background-color: #383838;
   color: #e0e0e0;
   align-self: flex-start;
   border-bottom-left-radius: 3px;
@@ -251,7 +268,7 @@ body {
 
 .message .time {
   display: block;
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   color: #aaa;
   margin-top: 3px;
   text-align: right;
