@@ -54,13 +54,15 @@ class CrudChat:
         await session.refresh(existing)
         return existing
 
-    async def add_member_to_chat(self, chat_member: CreateChatMember, session: AsyncSession) -> Optional[ChatMember]:
-        result = await session.exec(select(ChatMember).where(ChatMember.chat_id==chat_member.chat_id, ChatMember.user_id==chat_member.user_id))
+    async def add_member_to_chat(self, chat_id: int, chat_member: CreateChatMember, session: AsyncSession) -> Optional[ChatMember]:
+        result = await session.exec(select(ChatMember).where(ChatMember.chat_id==chat_id, ChatMember.user_id==chat_member.user_id))
         existing = result.first()
         if existing is not None:
             return existing
-        chat_member_dict = chat_member.model_dump()
-        new_member = ChatMember(**chat_member_dict)
+        new_member = ChatMember(
+            chat_id=chat_id, 
+            user_id=chat_member.user_id
+        )
         session.add(new_member)
         await session.commit()
         await session.refresh(new_member)
@@ -125,7 +127,7 @@ class CrudChat:
             return False
         session.delete(message_to_delete)
         await session.commit()
-        return True
+        return True 
     
     async def get_all_user_chats(self, user_id: int, session: AsyncSession) -> List[Chat]:
         result = await session.exec(select(Chat).join(ChatMember).where(ChatMember.user_id == user_id))

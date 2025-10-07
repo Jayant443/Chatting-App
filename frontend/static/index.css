@@ -46,13 +46,123 @@ body {
     position: absolute;
     top: 55px; 
     right: 15px;
-    width: 150px;
+    width: 170px;
     background-color: #2c2c2c;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     z-index: 100;
     padding: 5px 0;
     display: none;
+}
+
+.create-group-form {
+    position: absolute;
+    top: 55px; 
+    right: 15px;
+    width: 300px; 
+    height: 450px;
+    flex-direction: column;
+    background-color: #252525;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    z-index: 100;
+    padding: 15px;
+    gap: 15px;
+    right: 200px;
+    display: none;
+}
+
+.create-group-form h3 {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #ffffff;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #383838;
+    width: 100%;
+    text-align: center;
+}
+
+#group-name-input {
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    font-size: 1rem;
+    color: #e0e0e0;
+    height: 40px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.create-group-form .add-member {
+    display: flex;
+    flex-direction: column;
+    flex: 1; 
+    width: 100%;
+    gap: 10px; 
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.create-group-form .add-member h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #a0a0a0;
+    margin-bottom: 5px;
+}
+
+.create-group-form .add-member .menu-option {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 8px 10px;
+    gap: 10px;
+    text-align: left;
+    background-color: #383838;
+    border: none;
+    border-radius: 6px;
+    color: #e0e0e0;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+
+.create-group-form .add-member .menu-option:hover {
+    background-color: #4a92ff;
+    color: #ffffff;
+}
+
+.create-group-form .add-member::-webkit-scrollbar {
+  width: 8px;
+}
+.create-group-form .add-member::-webkit-scrollbar-track {
+  background: #2c2c2c; 
+}
+.create-group-form .add-member::-webkit-scrollbar-thumb {
+  background-color: #585858;
+  border-radius: 4px;
+}
+
+.create-group-form .add-member::-webkit-scrollbar-thumb:hover {
+  background-color: #777777;
+}
+
+#create-group-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    background-color: #428169;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#create-group-btn:hover {
+    background-color: #5aa686;
 }
 
 .options-menu .menu-option {

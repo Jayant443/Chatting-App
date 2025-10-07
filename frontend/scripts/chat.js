@@ -15,19 +15,40 @@ const addContactForm = document.querySelector(".add-contact-form");
 const addContactInput = document.getElementById("add-contact-input");
 const addContactSubmitBtn = document.getElementById("add-contact-submit-btn");
 
-let currentUserId = null;
-let currentChatId = null;
-let chatWebsocket = null;
-
-
 const optionsMenu = document.querySelector(".options-menu");
 const optionsBtn = document.querySelector(".options-button");
 const logoutBtn = document.getElementById("logout-btn");
 
+const createGroupForm = document.querySelector(".create-group-form");
+const createGroupBtn = document.getElementById("create-group");
+const createGroupInput = document.getElementById("group-name-input");
+const createGroupSubmitBtn = document.getElementById("create-group-btn");
+const membersContainer = document.querySelector(".create-group-form .add-member");
+
+let currentUserId = null;
+let currentChatId = null;
+let chatWebsocket = null;
+
+let allContactsData = [];
+let selectedMembers = new Set();
+
+function toggleCreateGrp() {
+    const isHidden = createGroupForm.style.display === "none" || !createGroupForm.style.display;
+    createGroupForm.style.display = isHidden ? "flex" : "none";
+
+    if (isHidden) {
+        renderSelectableMembers();
+    } else {
+        selectedMembers.clear();
+        membersContainer.innerHTML = "<h4>Add Members</h4>";
+        createGroupInput.value = "";
+    }
+}
 
 function handleDocumentClick(event) {
     const isClickInsideOptions = optionsMenu.contains(event.target) || optionsBtn.contains(event.target);
     const isClickInsideAddContactForm = addContactForm.contains(event.target) || addContactBtn.contains(event.target);
+     const isClickInsideCreateGroupForm = createGroupForm.contains(event.target) || createGroupBtn.contains(event.target);
     
     if (!isClickInsideOptions && optionsMenu.style.display !== "none") {
         optionsMenu.style.display = "none";
@@ -36,10 +57,105 @@ function handleDocumentClick(event) {
     if (!isClickInsideAddContactForm && addContactForm.style.display === "flex") {
         addContactForm.style.display = "none";
     }
+
+    if (!isClickInsideCreateGroupForm && createGroupForm.style.display === "flex") {
+        createGroupForm.style.display = "none";
+    }
 }
 
 async function toggleOptions() {
     optionsMenu.style.display = optionsMenu.style.display ==="none" ? "grid" : "none";
+}
+
+function toggleMemberSelection(itemElement, userId) {
+    if (selectedMembers.has(userId)) {
+        selectedMembers.delete(userId);
+        itemElement.style.backgroundColor = "#383838";
+    } else {
+        selectedMembers.add(userId);
+        itemElement.style.backgroundColor = "#1a7ca3";
+    }
+}
+
+function renderSelectableMembers() {
+    membersContainer.innerHTML = "<h4>Add Members</h4>";
+    const selectableUsers = allContactsData.filter(chat => chat.type === 'personal');
+
+    if (selectableUsers.length === 0) {
+        membersContainer.innerHTML += `<p style='padding: 10px; color:#aaa;'>No other contacts found.</p>`;
+        return;
+    }
+
+    selectableUsers.forEach(chat => {
+        const userId = chat.contact.id;
+        const username = chat.contact.username;
+        const profilePic = chat.contact.profile_pic || "assets/default-profile-icon.jpg";
+
+        const item = document.createElement("button");
+        item.classList.add("menu-option");
+        item.setAttribute("data-user-id", userId);
+        
+        const img = document.createElement("img");
+        img.src = profilePic;
+        img.classList.add("avatar"); 
+        
+        const nameP = document.createElement("p");
+        nameP.textContent = username;
+        
+        item.prepend(img);
+        item.appendChild(nameP);
+        item.addEventListener("click", () => toggleMemberSelection(item, userId));
+        
+        membersContainer.appendChild(item);
+    });
+}
+
+async function createGroup() {
+    const groupName = createGroupInput.value.trim();
+    const adminId = currentUserId;
+
+    if (selectedMembers.size === 0) {
+        alert("Please select a member to create group.");
+        return;
+    }
+
+    const body = JSON.stringify({
+        name: groupName,
+        type: "group",
+        admin_id: adminId
+    });
+    const res = await fetch(`${API_URL}/chats/group/create`, {
+        method: "POST",
+        headers: {
+            "Authorization":`Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
+        body: body
+    });
+
+    if (!res.ok) {
+        const errorData = await res.json();
+        alert(`Failed to create group: ${errorData.detail || 'Unknown error'}`);
+        return;
+    }
+
+    const newGroup = await res.json();
+    for (const memberId of selectedMembers) {
+        let newGroupBody = JSON.stringify({
+            user_id: memberId
+        });
+        await fetch(`${API_URL}/chats/${newGroup.id}/members`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: newGroupBody
+        });
+    }
+    toggleCreateGrp();
+    await loadContacts();
+    alert(`Group "${groupName}" created successfully!`);
 }
 
 function toggleAddContact() {
@@ -212,6 +328,7 @@ async function loadContacts() {
     const chats = await res.json();
     const chatList = document.getElementById("chat-list");
     chatList.innerHTML = "";
+    allContactsData = chats; 
     
     let firstChatLoaded = false;
 
@@ -263,7 +380,7 @@ async function loadContacts() {
 
 async function logout() {
     localStorage.removeItem("token");
-    window.location.href = "/frontend/templates/login.html";
+    window.location.href = "login.html";
 }
 
 
@@ -277,6 +394,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.querySelector(".chat-input .send-btn").addEventListener("click", sendMessage);
     optionsBtn.addEventListener("click", toggleOptions);
     addContactBtn.addEventListener("click", toggleAddContact);
+    createGroupBtn.addEventListener("click", toggleCreateGrp);
+    createGroupSubmitBtn.addEventListener("click", createGroup); 
     addContactSubmitBtn.addEventListener("click", addContact);
     logoutBtn.addEventListener("click", logout);
     document.addEventListener("click", handleDocumentClick);

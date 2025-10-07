@@ -21,14 +21,16 @@ class MessageSchema(MessageBase):
 class ChatBase(BaseModel):
     name: str
     type: str
-class CreateChat(ChatBase):
+class CreateChat(BaseModel):
     name: Optional[str] = None
+    type: Optional[str] = None
     admin_id: Optional[int] = None
 
 class UpdateChat(BaseModel):
     name: Optional[str] = None
 
 class ContactDetail(BaseModel):
+    id: Optional[int] = None
     username: Optional[str] = None
     profile_pic: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
@@ -56,7 +58,6 @@ class ChatMemberBase(BaseModel):
     role: str = "member"
 
 class CreateChatMember(BaseModel):
-    chat_id: int
     user_id: int
 
 class ChatMemberSchema(ChatMemberBase):

@@ -24,9 +24,19 @@
                 <h2></h2>
                 <button class="options-button">⋮</button>
                 <div class="options-menu">
+                    <button class="menu-option" id="create-group">Create Group</button>
                     <button class="menu-option" id="add-contact">New Contact</button>
                     <button class="menu-option" id="view-profile">Profile</button>
                     <button class="menu-option" id="logout-btn">Logout</button>
+                </div>
+                <div class="create-group-form">
+                    <h3>Create Group</h3>
+                    <input id="group-name-input" type="text" placeholder="Enter group name">
+                    <div class="add-member">
+                        <h4>Add Members</h4>
+                        <button class="menu-option" id="select-user"><img src="assets/default-profile-icon.jpg" class="avatar"><p>User</p></button>
+                    </div>
+                    <button type="submit" id="create-group-btn">Create</button>
                 </div>
             </div>
             <div class="messages" id="messages">
