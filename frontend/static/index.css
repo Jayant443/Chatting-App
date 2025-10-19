@@ -326,10 +326,10 @@ body {
 
 .message {
   position: relative;
-  max-width: 50%;
+  max-width: 30%;
   padding: 10px 15px;
   border-radius: 20px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   line-height: 1.4;
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -381,7 +381,14 @@ body {
   font-size: 0.6rem;
   color: #aaa;
   margin-top: 3px;
+}
+
+.message.sent .time {
   text-align: right;
+}
+
+.message.received .time {
+  text-align: left;
 }
 
 .chat-input {
