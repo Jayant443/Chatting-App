@@ -106,7 +106,3 @@ async def websocket_endpoint(websocket: WebSocket, chat_id: int, session: AsyncS
 
     except WebSocketDisconnect:
         manager.disconnect(websocket, chat.id)
-        await manager.broadcast(chat.id, {
-            "system": True,
-            "message": f"{user.username} left the chat"
-        })

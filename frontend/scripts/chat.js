@@ -182,7 +182,7 @@ async function addContact() {
     if (res.ok) {
         const newChat = await res.json();
         addContactInput.value = '';
-        toggleAddContactForm(); 
+        toggleAddContact(); 
         await loadContacts();
         const displayName = newChat.contact.username;
         const profileUrl = newChat.contact.profile_pic || "assets/default-profile-icon.jpg";
@@ -220,25 +220,19 @@ async function addMessage(msg) {
     const div = document.createElement("div");
     div.classList.add("message");
 
-    if (msg.system) {
-       div.classList.add("system");
-       div.textContent = msg.message;
-    } 
-    else {
-        div.classList.add(msg.sender_id===currentUserId ? "sent" : "received");
-        
-        const textSpan = document.createElement("span");
-        textSpan.classList.add("text");
-        textSpan.textContent = msg.content;
+    div.classList.add(msg.sender_id===currentUserId ? "sent" : "received");
     
-        const timeSpan = document.createElement("span");
-        timeSpan.classList.add("time");
-        const date = new Date(msg.created_at);
-        timeSpan.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
-        div.appendChild(textSpan);
-        div.appendChild(timeSpan);
-     }
+    const textSpan = document.createElement("span");
+    textSpan.classList.add("text");
+    textSpan.textContent = msg.content;
+
+    const timeSpan = document.createElement("span");
+    timeSpan.classList.add("time");
+    const date = new Date(msg.created_at);
+    timeSpan.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    div.appendChild(textSpan);
+    div.appendChild(timeSpan);
 
 
     messageDiv.appendChild(div);
@@ -280,10 +274,6 @@ async function connectWebsocket(chatId) {
 
     const wsUrl = `ws://127.0.0.1:8000/chats/ws/${chatId}?token=${token}`;
     chatWebsocket = new WebSocket(wsUrl);
-
-    chatWebsocket.onopen = () => {
-        console.log(`connected to chat: ${chatId}`);
-    };
 
     chatWebsocket.onmessage = (event) => {
         const msg = JSON.parse(event.data);
