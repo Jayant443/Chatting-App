@@ -215,13 +215,28 @@ async function getUserId() {
     }
 }
 
+
 async function addMessage(msg) {
     const messageDiv = document.getElementById("messages");
     const div = document.createElement("div");
     div.classList.add("message");
 
-    div.classList.add(msg.sender_id===currentUserId ? "sent" : "received");
+    if (msg.sender_id!=currentUserId) {
+        div.classList.add("received");
+        const sender = document.createElement("span");
+        sender.classList.add("sender");
+        sender.textContent = msg.sender.username;
+        console.log(msg.sender);
+        div.appendChild(sender);
+    }
     
+    else {
+        div.classList.add("sent");
+    }
+    
+    const detailsDiv = document.createElement("div");
+    detailsDiv.classList.add("details");
+
     const textSpan = document.createElement("span");
     textSpan.classList.add("text");
     textSpan.textContent = msg.content;
@@ -231,10 +246,9 @@ async function addMessage(msg) {
     const date = new Date(msg.created_at);
     timeSpan.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    div.appendChild(textSpan);
-    div.appendChild(timeSpan);
-
-
+    detailsDiv.appendChild(textSpan);
+    detailsDiv.appendChild(timeSpan);        
+    div.appendChild(detailsDiv);
     messageDiv.appendChild(div);
     messageDiv.scrollTop = messageDiv.scrollHeight;
     
@@ -247,12 +261,12 @@ async function loadMessages(chatId, chatName, profileUrl = "assets/default-profi
 
     const userId = await getUserId();
 
-    connectWebsocket(chatId);
+    await connectWebsocket(chatId);
 
     const res = await fetch(`${API_URL}/chats/${chatId}/messages`, {
-        headers: {"Authorization": `Bearer ${token}`}
+        headers: { "Authorization": `Bearer ${token}` }
     });
-    
+
     if (!res.ok) {
         console.error("Failed to load messages:", res.status, res.statusText);
         return;
@@ -261,10 +275,7 @@ async function loadMessages(chatId, chatName, profileUrl = "assets/default-profi
     const messages = await res.json();
     const messageDiv = document.getElementById("messages");
     messageDiv.innerHTML = "";
-
-    messages.forEach(msg => {
-        addMessage(msg);
-    });
+    messages.forEach(msg => addMessage(msg));
 }
 
 async function connectWebsocket(chatId) {
@@ -275,17 +286,25 @@ async function connectWebsocket(chatId) {
     const wsUrl = `ws://127.0.0.1:8000/chats/ws/${chatId}?token=${token}`;
     chatWebsocket = new WebSocket(wsUrl);
 
+    chatWebsocket.onopen = () => {
+        console.log(`Connected to chat ${chatId}`);
+    };
+
     chatWebsocket.onmessage = (event) => {
-        const msg = JSON.parse(event.data);
-        addMessage(msg);
+        try {
+            const msg = JSON.parse(event.data);
+            addMessage(msg);
+        } catch (err) {
+            console.error("Invalid message data:", event.data, err);
+        }
     };
 
     chatWebsocket.onclose = (event) => {
-        console.log("Websocket closed: ", event.code, event.reason);
-    }
+        console.warn(`WebSocket closed (${event.code}): ${event.reason || "no reason"}`);
+    };
 
     chatWebsocket.onerror = (error) => {
-        console.error("Websocket error: ", error);
+        console.error("WebSocket error:", error);
     };
 }
 

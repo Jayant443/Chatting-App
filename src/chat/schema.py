@@ -16,6 +16,20 @@ class MessageSchema(MessageBase):
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
 
+class SenderDetail(BaseModel):
+    id: int
+    username: str
+    profile_pic: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
+
+class MessageWithSender(BaseModel):
+    id: int
+    chat_id: int
+    sender_id: int
+    content: str
+    created_at: datetime
+    sender: Optional[SenderDetail] = None
+    model_config = ConfigDict(from_attributes=True)
 
 #Chat schema
 class ChatBase(BaseModel):

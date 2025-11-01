@@ -325,6 +325,8 @@ body {
 }
 
 .message {
+  display: flex;
+  flex-direction: column;
   position: relative;
   max-width: 30%;
   padding: 10px 15px;
@@ -334,7 +336,6 @@ body {
   word-wrap: break-word;
   overflow-wrap: break-word;
   word-break: break-word;
-  display: inline-block;
 }
 
 .messages::-webkit-scrollbar {
@@ -366,18 +367,22 @@ body {
   border-bottom-left-radius: 3px;
 }
 
-.message.system {
-  background-color: #428169;
-  border-radius: 5px;
-  color: #ffffff;
-  align-self: center;
-  font-size: 0.85rem;
-  padding: 5px 15px;
-  max-width: fit-content;
+.message.received .details {
+  display: flex;
+  flex-direction: column;
+}
+
+.message.sent .details {
+  display: flex;
+  flex-direction: column;
+}
+
+.message.received .sender {
+  font-size: 0.7rem;
+  color:#209aca;
 }
 
 .message .time {
-  display: block;
   font-size: 0.6rem;
   color: #aaa;
   margin-top: 3px;
@@ -388,7 +393,7 @@ body {
 }
 
 .message.received .time {
-  text-align: left;
+  text-align: right;
 }
 
 .chat-input {

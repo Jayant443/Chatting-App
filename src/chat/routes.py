@@ -19,12 +19,44 @@ from .schema import (
                 ChatMemberBase,
                 ContactDetail,
                 ChatSchemaWithContact,
-                AddContactrequest
+                AddContactrequest,
+                MessageWithSender, 
+                SenderDetail
             )
 
 chat_router = APIRouter()
 chat_crud = CrudChat()
 user_crud = CrudUser()
+
+
+
+@chat_router.get("/{chat_id}/messages", response_model=List[MessageWithSender])
+async def get_chat_messages(chat_id: int, current_user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
+    chat = await chat_crud.get_chat_by_id(chat_id, session)
+    if chat is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Chat not found"
+        )
+    
+    user_in_chat = await chat_crud.get_group_member_by_id(chat_id, current_user.id, session)
+    if user_in_chat is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not a member of this chat. Cannot view messages."
+        )
+
+    messages = await chat_crud.get_chat_messages_by_id(chat_id, session)
+
+    response_messages = []
+    for message in messages:
+        sender = await user_crud.get_user_by_id(message.sender_id, session)
+        message_data = MessageWithSender.model_validate(message)
+        if sender:
+            message_data.sender = SenderDetail.model_validate(sender)
+        response_messages.append(message_data)
+    
+    return response_messages
 
 @chat_router.post("/group/create")
 async def create_group_chat(chat: CreateChat, session: AsyncSession = Depends(get_session)):
@@ -88,21 +120,3 @@ async def get_my_chats(current_user: User = Depends(get_current_user), session: 
         response_list.append(chat_data)
     return response_list
 
-@chat_router.get("/{chat_id}/messages", response_model=List[MessageSchema])
-async def get_chat_messages(chat_id: int, current_user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
-    chat = await chat_crud.get_chat_by_id(chat_id, session)
-    if chat is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
-            detail="Chat not found"
-        )
-    
-    user_in_chat = await chat_crud.get_group_member_by_id(chat_id, current_user.id, session)
-    if user_in_chat is None:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, 
-            detail="Not a member of this chat. Cannot view messages."
-        )
-
-    messages = await chat_crud.get_chat_messages_by_id(chat_id, session)
-    return messages
