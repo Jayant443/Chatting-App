@@ -24,6 +24,8 @@ const createGroupBtn = document.getElementById("create-group");
 const createGroupInput = document.getElementById("group-name-input");
 const createGroupSubmitBtn = document.getElementById("create-group-btn");
 const membersContainer = document.querySelector(".create-group-form .add-member");
+const viewProfileBtn = document.getElementById("view-profile");
+const profilePanel = document.querySelector(".profile");
 
 let currentUserId = null;
 let currentChatId = null;
@@ -45,10 +47,19 @@ function toggleCreateGrp() {
     }
 }
 
+async function toggleProfile() {
+    const isHidden = profilePanel.style.display === "none" || !profilePanel.style.display;
+    profilePanel.style.display = isHidden ? "flex" : "none";
+    if (isHidden) {
+        await populateProfile();
+    }
+}
+
 function handleDocumentClick(event) {
     const isClickInsideOptions = optionsMenu.contains(event.target) || optionsBtn.contains(event.target);
     const isClickInsideAddContactForm = addContactForm.contains(event.target) || addContactBtn.contains(event.target);
      const isClickInsideCreateGroupForm = createGroupForm.contains(event.target) || createGroupBtn.contains(event.target);
+     const isClickInsideProfile = profilePanel.contains(event.target) || viewProfileBtn.contains(event.target);
     
     if (!isClickInsideOptions && optionsMenu.style.display !== "none") {
         optionsMenu.style.display = "none";
@@ -60,6 +71,10 @@ function handleDocumentClick(event) {
 
     if (!isClickInsideCreateGroupForm && createGroupForm.style.display === "flex") {
         createGroupForm.style.display = "none";
+    }
+    
+    if (!isClickInsideProfile && profilePanel.style.display === "flex") {
+        profilePanel.style.display = "none";
     }
 }
 
@@ -392,6 +407,39 @@ async function logout() {
     window.location.href = "login.html";
 }
 
+async function populateProfile() {
+    const res = await fetch(`${API_URL}/user/users/me`, {
+        headers: { "Authorization": `Bearer ${token}` }
+    });
+
+    if (!res.ok) {
+        localStorage.removeItem("token");
+        window.location.href = "login.html";
+        return;
+    }
+
+    const user = await res.json();
+
+    if (!currentUserId) currentUserId = user.id;
+
+    const usernameEl = document.getElementById("profile-username");
+    const emailEl = document.getElementById("profile-email");
+    const joinDateEl = document.getElementById("profile-join-date");
+
+    if (usernameEl) usernameEl.textContent = user.username || "";
+    if (emailEl) emailEl.textContent = user.email || "";
+
+    if (joinDateEl) {
+        try {
+            const created = new Date(user.created_at);
+            joinDateEl.textContent = created.toLocaleDateString(undefined, { year: 'numeric', month: 'short' });
+        } catch {
+            joinDateEl.textContent = "";
+        }
+    }
+}
+
+
 
 document.addEventListener("DOMContentLoaded", async () => {
     const userId = await getUserId();
@@ -404,7 +452,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     optionsBtn.addEventListener("click", toggleOptions);
     addContactBtn.addEventListener("click", toggleAddContact);
     createGroupBtn.addEventListener("click", toggleCreateGrp);
-    createGroupSubmitBtn.addEventListener("click", createGroup); 
+    createGroupSubmitBtn.addEventListener("click", createGroup);
+    viewProfileBtn.addEventListener("click", toggleProfile); 
     addContactSubmitBtn.addEventListener("click", addContact);
     logoutBtn.addEventListener("click", logout);
     document.addEventListener("click", handleDocumentClick);

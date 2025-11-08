@@ -57,7 +57,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Async
 
 
 @user_router.get("/users/me", response_model=UserSchema)
-async def read_users_me(current_user: UserSchema = Depends(get_current_user), session: AsyncSession = Depends(get_session),):
+async def read_users_me(current_user: UserSchema = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
     user = await get_user(current_user.username, session)
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
