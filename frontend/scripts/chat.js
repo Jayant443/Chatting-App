@@ -241,7 +241,6 @@ async function addMessage(msg) {
         const sender = document.createElement("span");
         sender.classList.add("sender");
         sender.textContent = msg.sender.username;
-        console.log(msg.sender);
         div.appendChild(sender);
     }
     

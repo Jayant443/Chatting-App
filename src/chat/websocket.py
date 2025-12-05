@@ -99,7 +99,10 @@ async def websocket_endpoint(websocket: WebSocket, chat_id: int, session: AsyncS
                 "id": saved_message.id,
                 "chat_id": saved_message.chat_id,
                 "sender_id": saved_message.sender_id,
-                "username": user.username,
+                "sender" : {
+                    "id": user.id,
+                    "username": user.username,
+                },
                 "content": saved_message.content,
                 "created_at": saved_message.created_at.isoformat()
             })
