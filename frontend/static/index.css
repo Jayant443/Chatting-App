@@ -253,7 +253,6 @@ body {
 }
 
 .sidebar .add-contact-form {
-  display: flex;
   padding: 3%;
   align-items: center;
   justify-content: space-between;
