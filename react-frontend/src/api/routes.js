@@ -1,0 +1,8 @@
+export const host = "http://127.0.0.1:8000";
+export const signupRoute = `${host}/user/signup`;
+export const loginRoute = `${host}/user/token`;
+export const chatRoute = `${host}/chats`;
+export const createGrpRoute = `${chatRoute}/group/create`;
+export const addContactRoute = `${chatRoute}/contact/add`;
+export const getUserContacts = `${chatRoute}/contact`;
+export const getUserRoute = `${host}/user/users/me`;
