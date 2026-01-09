@@ -28,8 +28,6 @@ chat_router = APIRouter()
 chat_crud = CrudChat()
 user_crud = CrudUser()
 
-
-
 @chat_router.get("/{chat_id}/messages", response_model=List[MessageWithSender])
 async def get_chat_messages(chat_id: int, current_user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
     chat = await chat_crud.get_chat_by_id(chat_id, session)

@@ -4,7 +4,7 @@ import { loginRoute } from "../api/routes";
 import axios from "axios";
 import "./login.css";
 
-export function Login() {
+function Login() {
     const navigate = useNavigate("index.html");
     const [formData, setFormData] = useState(
         {
@@ -37,7 +37,7 @@ export function Login() {
         if (res.ok) {
             const data = await res.json();
             localStorage.setItem("token", data.access_token);
-            navigate("index.html")
+            navigate("index.html");
         }
         else {
             alert("Login Failed! Please check the password.");
@@ -64,3 +64,5 @@ export function Login() {
         </>
     );
 }
+
+export default Login;
