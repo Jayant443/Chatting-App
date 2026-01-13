@@ -19,7 +19,7 @@ function ContactList() {
         }
         fetchChats();
     }, []);
-    if (error) return <><div>Error</div></>
+    if (error) return <><div>{error}</div></>
     return (
         <>
             <ul className="chat-list" id="chat-list">
