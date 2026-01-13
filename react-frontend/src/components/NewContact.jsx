@@ -9,23 +9,26 @@ function NewContact() {
 
     async function handleSubmit(e) {
         e.preventDefault();
-        if (!email) setError("Please enter an email!");
-        const res = await axios.post(
+        if (!email) {
+            setError("Please enter an email!");
+            return;
+        }
+        try {
+            const res = await axios.post(
             addContactRoute,
             {email: email}
         );
-        if (res.ok) {
-            const data = res.json();
-            alert(`${data.name} is now a contact!`);
+        const data = res.data;
+        alert(`${data.name} is now a contact!`);
         }
-        else {
-            setError("Failed to add contact");
+        catch (err) {
+            setError(err.response?.data?.message || "Failed to add contact");
         }
     }
     return (
         <>
-            <div class="add-contact-form">
-                <input id="add-contact-input" type="text" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} value={email}/>
+            <div className="add-contact-form">
+                <input id="add-contact-input" type="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} value={email}/>
                 <p>{error}</p>
                 <button type="submit" id="add-contact-submit-btn" onClick={handleSubmit}>Add</button>
             </div>
