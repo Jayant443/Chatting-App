@@ -3,7 +3,7 @@ import axios from 'axios';
 import "./Sidebar.css";
 import { addContactRoute } from '../api/routes';
 
-function NewContact() {
+function NewContact({ onClose }) {
     const [email, setEmail] = useState("");
     const [error, setError] = useState(null);
 
@@ -31,6 +31,7 @@ function NewContact() {
                 <input id="add-contact-input" type="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} value={email}/>
                 <p>{error}</p>
                 <button type="submit" id="add-contact-submit-btn" onClick={handleSubmit}>Add</button>
+                <button onClick={onClose}>Cancel</button>
             </div>
         </>
     );

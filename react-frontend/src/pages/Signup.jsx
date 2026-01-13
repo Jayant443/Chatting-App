@@ -4,7 +4,7 @@ import { signupRoute } from "../api/routes";
 import { useNavigate } from "react-router-dom";
 import "./login.css";
 
-export function Signup() {
+export default  function Signup() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         username: "",
@@ -24,40 +24,36 @@ export function Signup() {
         e.preventDefault();
         if (!formData.username || !formData.email || !formData.password) {
             alert("Please fill all the fields!");
+            return;
         }
+        // eslint-disable-next-line no-unused-vars
         const res = await axios.post(
-            signupRoute, 
+            signupRoute,
             {
                 username: formData.username,
                 email: formData.email,
                 password: formData.password
             }
         );
-
-        if (res.ok) {
-            alert("SignUp successful");
-            navigate("login.html");
-        }
-        else {
-            alert("Something went wrong");
-        }
+        alert("SignUp successful");
+        navigate("/login", { replace: true });
     }
 
     return (
         <>
             <div className="form-box">
-                <form className="form" id="signup-form">
+                <form className="form" id="signup-form" onSubmit={handleSubmit}>
                     <span className="title">Sign up</span>
                     <span className="subtitle">Create an account with your email.</span>
                     <div className="form-container">
-                        <input type="text" className="input" id="username" value={formData.username} placeholder="Username" onChange={handleChange}/>
-                        <input type="email" className="input" id="email" value={formData.email} placeholder="Email" onChange={handleChange}/>
-                        <input type="password" className="input" id="password" value={formData.password} placeholder="Password" onChange={handleChange}/>
+                        <input type="text" className="input" id="username" name="username" value={formData.username} placeholder="Username" onChange={handleChange}/>
+                        <input type="email" className="input" id="email" name="email" value={formData.email} placeholder="Email" onChange={handleChange}/>
+                        <input type="password" className="input" id="password" name="password" value={formData.password} placeholder="Password" onChange={handleChange}/>
                     </div>
-                    <button type="submit" onClick={handleSubmit}>Sign up</button>
+                    <button type="submit">Sign up</button>
                 </form>
                 <div className="form-section">
-                    <p>Already have an account? <a href="login.html">Log in</a> </p>
+                    <p>Already have an account? <a href="/login">Log in</a> </p>
                 </div>
             </div>
         </>

@@ -9,13 +9,11 @@ function Sidebar() {
         <>
             <aside class="sidebar">
                 <header class="sidebar-header">Chats</header>
-                <NewContact />
-                <ContactList />
                 <button onClick={() => setShowNewContact(true)}>+</button>
-
                 {showNewContact && (
                     <NewContact onClose={() => setShowNewContact(false)} />
                 )}
+                <ContactList />
             </aside>
         </>
     );

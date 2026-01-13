@@ -4,8 +4,8 @@ import { loginRoute } from "../api/routes";
 import axios from "axios";
 import "./login.css";
 
-function Login() {
-    const navigate = useNavigate("index.html");
+export default function Login() {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState(
         {
             username: "",
@@ -14,7 +14,7 @@ function Login() {
     );
 
     function handleChange(e) {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
@@ -25,44 +25,41 @@ function Login() {
         e.preventDefault();
         if (!formData.username || !formData.password) {
             alert("Please fill all the fields!");
+            return;
         }
 
-        const res = await axios.post(
+        const form = new URLSearchParams();
+        form.append("username", formData.username);
+        form.append("password", formData.password);
+
+        const { data } = await axios.post(
             loginRoute,
+            form,
             {
-                username: formData.username,
-                password: formData.password
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
             }
         );
-        if (res.ok) {
-            const data = await res.json();
-            localStorage.setItem("token", data.access_token);
-            navigate("index.html");
-        }
-        else {
-            alert("Login Failed! Please check the password.");
-        }
+
+
+        localStorage.setItem("token", data.access_token);
+        navigate("/chat", { replace: true });
     }
 
     return (
         <>
             <div className="form-box">
-                <form className="form" id="signup-form">
-                    <span className="title">Sign up</span>
+                <form className="form" id="signup-form" onSubmit={handleSubmit}>
+                    <span className="title">Login</span>
                     <span className="subtitle">Create an account with your email.</span>
                     <div className="form-container">
-                        <input type="text" className="input" id="username" value={formData.username} placeholder="Username" onChange={handleChange}/>
-                        <input type="email" className="input" id="email" value={formData.email} placeholder="Email" onChange={handleChange}/>
-                        <input type="password" className="input" id="password" value={formData.password} placeholder="Password" onChange={handleChange}/>
+                        <input type="text" className="input" name="username" id="username" value={formData.username} placeholder="Username" onChange={handleChange} />
+                        <input type="password" className="input" name="password" id="password" value={formData.password} placeholder="Password" onChange={handleChange} />
                     </div>
-                    <button type="submit" onClick={handleSubmit}>Sign up</button>
+                    <button type="submit">Login</button>
                 </form>
-                <div className="form-section">
-                    <p>Already have an account? <a href="login.html">Log in</a> </p>
-                </div>
             </div>
         </>
     );
 }
-
-export default Login;
