@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
 import "./Sidebar.css";
-import ContactList from "./ContactList";
-import NewContact from "./NewContact";
+import   NewContact from "./NewContact";
 
-function Sidebar() {
-    const [showNewContact, setShowNewContact] = useState(false);
+function Sidebar({ contacts, onSelectChat }) {
+    const [showNewContactForm, setShowNewContactForm] = useState(false);
     return (
         <>
             <aside className="sidebar">
                 <header className="sidebar-header">Chats</header>
-                <button id='new-contact-btn' onClick={() => setShowNewContact(true)}>+</button>
-                {showNewContact && (
-                    <NewContact onClose={() => setShowNewContact(false)} />
+                <button id='new-contact-btn' onClick={() => setShowNewContactForm(true)}>+</button>
+                {showNewContactForm && (
+                    <NewContact onClose={() => setShowNewContactForm(false)} />
                 )}
-                <ContactList />
+                <ul className="chat-list" id="chat-list">
+                {contacts.map((contact) => (<li key={contact.id} className="chat-item">
+                    <img className="avatar" src="assets/default-profile-icon.jpg" />
+                    <div className="chat-info" onClick={onSelectChat}>
+                        <span className="chat-name">{contact.name}</span>
+                        <span className="recent-msg">Click to contact</span>
+                    </div>
+                </li>
+                ))};
+            </ul>
             </aside>
         </>
     );

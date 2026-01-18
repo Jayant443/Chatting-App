@@ -52,7 +52,7 @@ export default function Login() {
             <div className="form-box">
                 <form className="form" id="signup-form" onSubmit={handleSubmit}>
                     <span className="title">Login</span>
-                    <span className="subtitle">Create an account with your email.</span>
+                    <span className="subtitle">Welcome Back!</span>
                     <div className="form-container">
                         <input type="text" className="input" name="username" id="username" value={formData.username} placeholder="Username" onChange={handleChange} />
                         <input type="password" className="input" name="password" id="password" value={formData.password} placeholder="Password" onChange={handleChange} />
