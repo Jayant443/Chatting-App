@@ -1,36 +1,47 @@
 import Sidebar from "../components/Sidebar"
 import "./index.css";
-import { getContacts, getMessages } from "../services/chat";
+import { getContacts, getMessages, getCurrentUser } from "../services/chat";
 import { useState, useEffect } from "react";
 import ChatWindow from "../components/ChatWindow";
 import Options from "../components/Options";
 
 export default function Chat() {
     const [contacts, setContacts] = useState([]);
-    const [currentChat, setCurrentChat] = useState([]);
+    const [currentChat, setCurrentChat] = useState(null);
+    const [currentUserId, setCurrentUserId] = useState(null);
     const [messages, setMessages] = useState([]);
 
     useEffect(() => {
-        loadContacts;
-    });
+        const loadContacts = async () => {
+            const data = await getContacts();
+            setContacts(data);
+            if (data.length>0 && !currentChat) {
+                setCurrentChat(data[0]);
+            }
+        }
+        loadContacts();
+    }, [currentChat]);
 
     useEffect(() => {
-        if (currentChat) {
-            loadMessages;
+        const loadMessages = async () => {
+            const data = await getMessages(currentChat.id);
+            setMessages(data);
         }
+        if (currentChat?.id) {
+            loadMessages();
+        }
+    }, [currentChat]);
+
+    useEffect(() => {
+        const currentUser = async() => {
+            const data = await getCurrentUser();
+            setCurrentUserId(data.id);
+        }
+        currentUser();
     })
-    const loadContacts = async () => {
-        const data = await getContacts();
-        setContacts(data);
-    }
 
     function handleCurrentChat(chat) {
         setCurrentChat(chat);
-    }
-
-    const loadMessages = async () => {
-        const data = await getMessages(currentChat.id);
-        setMessages(data);
     }
 
     return (
@@ -40,10 +51,10 @@ export default function Chat() {
                 <div className="chat-container">
                     <div className="chat-title">
                         <img src="assets/default-profile-icon.jpg" className="avatar" />
-                        <h2>{currentChat.name}</h2>
+                        <h2>{currentChat?.contact.username}</h2>
                         <Options />
                     </div>
-                    <ChatWindow currentUserId={currentChat.id} messages={messages}/>
+                    <ChatWindow currentUserId={currentUserId} messages={messages}/>
                 </div>
             </div>
         </>

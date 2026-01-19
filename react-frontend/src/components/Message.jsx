@@ -6,7 +6,7 @@ function Message({ message, isSent }) {
     return (
         <>
             <div className={`message ${isSent ? "sent": "received"}`}>
-                {!isSent && message.sender && (<span className="sender">{message.sender}</span>)}
+                {!isSent && message.sender && (<span className="sender">{message.sender.username}</span>)}
                 <div className="details">
                     <span className="text">{message.content}</span>
                     <span className="time">{formatTime(message.created_at)}</span>

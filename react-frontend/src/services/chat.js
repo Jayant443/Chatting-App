@@ -1,4 +1,4 @@
-import { chatRoute } from "./routes";
+import { chatRoute, getUserRoute } from "./routes";
 import axios from "axios";
 
 
@@ -16,5 +16,10 @@ export const getContacts = async() => {
 
 export const getMessages = async(chatId) => {
     const response = await axios.get(`${chatRoute}/${chatId}/messages`, config);
+    return response.data;
+}
+
+export const getCurrentUser = async() => {
+    const response = await axios.get(getUserRoute, config);
     return response.data;
 }

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { signupRoute } from "../api/routes";
+import { signupRoute } from "../services/routes";
 import { useNavigate } from "react-router-dom";
 import "./login.css";
 
