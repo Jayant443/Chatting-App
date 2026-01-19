@@ -4,6 +4,7 @@ import { getContacts, getMessages, getCurrentUser } from "../services/chat";
 import { useState, useEffect } from "react";
 import ChatWindow from "../components/ChatWindow";
 import Options from "../components/Options";
+import defaultAvatar from "../assets/default-profile-icon.jpg";
 
 export default function Chat() {
     const [contacts, setContacts] = useState([]);
@@ -20,7 +21,8 @@ export default function Chat() {
             }
         }
         loadContacts();
-    }, [currentChat]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
         const loadMessages = async () => {
@@ -44,16 +46,31 @@ export default function Chat() {
         setCurrentChat(chat);
     }
 
+    const getUserDisplayInfo = (chat) => {
+        if (chat.type==="personal" && chat.contact) {
+            return {
+                name: chat.contact.username,
+                avatar: defaultAvatar
+            }
+        }
+        return {
+            name: chat.name || "Group Chat",
+            avatar: defaultAvatar
+        }
+    }
+
     return (
         <>
             <div className="chat-app">
                 <Sidebar contacts={contacts} onSelectChat={handleCurrentChat} />
                 <div className="chat-container">
-                    <div className="chat-title">
-                        <img src="assets/default-profile-icon.jpg" className="avatar" />
-                        <h2>{currentChat?.contact.username}</h2>
-                        <Options />
-                    </div>
+                    {currentChat && (
+                        <div className="chat-title">
+                            <img src={getUserDisplayInfo(currentChat).avatar} className="avatar" />
+                            <h2>{currentChat?.contact?.username || currentChat?.name || "Chat"}</h2>
+                            <Options />
+                        </div>
+                    )}
                     <ChatWindow currentUserId={currentUserId} messages={messages}/>
                 </div>
             </div>
