@@ -69,8 +69,8 @@ async def update_chat(chat_id: int, chat: UpdateChat, session: AsyncSession = De
     updated_chat = await chat_crud.update_chat(chat_id, chat, session)
     return updated_chat
 
-@chat_router.post("/{chat_id}/members")
-async def add_members(chat_id: int, chat_member: CreateChatMember, session: AsyncSession = Depends(get_session)):
+@chat_router.post("/{chat_id}/member")
+async def add_member(chat_id: int, chat_member: CreateChatMember, session: AsyncSession = Depends(get_session)):
     member = await chat_crud.add_member_to_chat(chat_id, chat_member, session)
     if member is None:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Something went wrong")
@@ -117,4 +117,8 @@ async def get_my_chats(current_user: User = Depends(get_current_user), session: 
                     chat_data.contact = ContactDetail.model_validate(other_user)
         response_list.append(chat_data)
     return response_list
+
+@chat_router.delete("/delete")
+async def delete_chat(chat_id: int, current_user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
+    return await chat_crud.delete_chat(chat_id, session)
 

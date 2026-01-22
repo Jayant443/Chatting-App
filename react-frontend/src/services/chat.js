@@ -23,3 +23,13 @@ export const getCurrentUser = async() => {
     const response = await axios.get(getUserRoute, config);
     return response.data;
 }
+
+export const createGrp = async(grpName, userId) => {
+    const response = await axios.post(`${chatRoute}/group/create`, {name: grpName, type: "group", admin_id:userId}, config);
+    return response.data;
+}
+
+export const addMember = async(memberId, chatId) => {
+    const response = await axios.post(`${chatRoute}/${chatId}/member`, {memberId}, config);
+    return response.data;
+}

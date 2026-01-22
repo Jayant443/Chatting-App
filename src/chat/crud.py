@@ -133,3 +133,10 @@ class CrudChat:
         result = await session.exec(select(Chat).join(ChatMember).where(ChatMember.user_id == user_id))
         return result.all()
 
+    async def delete_chat(self, chat_id: int, session: AsyncSession) -> bool:
+        chat_to_delete = await session.get(Chat, chat_id)
+        if chat_to_delete is None:
+            return False
+        await session.delete(chat_to_delete)
+        await session.commit()
+        return True

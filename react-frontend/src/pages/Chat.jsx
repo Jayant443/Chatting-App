@@ -1,6 +1,6 @@
 import Sidebar from "../components/Sidebar"
 import "./index.css";
-import { getContacts, getMessages, getCurrentUser } from "../services/chat";
+import { getContacts, getMessages, getCurrentUser, createGrp, addMember } from "../services/chat";
 import { useState, useEffect } from "react";
 import ChatWindow from "../components/ChatWindow";
 import Options from "../components/Options";
@@ -18,13 +18,6 @@ export default function Chat() {
     const [showCreateGroup, setShowCreateGroup] = useState(false);
 
     useEffect(() => {
-        const loadContacts = async () => {
-            const data = await getContacts();
-            setContacts(data);
-            if (data.length > 0 && !currentChat) {
-                setCurrentChat(data[0]);
-            }
-        }
         loadContacts();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -51,6 +44,14 @@ export default function Chat() {
         setCurrentChat(chat);
     }
 
+    const loadContacts = async () => {
+        const data = await getContacts();
+        setContacts(data);
+        if (data.length > 0 && !currentChat) {
+            setCurrentChat(data[0]);
+        }
+    }
+
     const getUserDisplayInfo = (chat) => {
         if (chat.type === "personal" && chat.contact) {
             return {
@@ -62,6 +63,14 @@ export default function Chat() {
             name: chat.name || "Group Chat",
             avatar: defaultAvatar
         }
+    }
+
+    async function createGroup(grpName, memberIds) {
+        const group = await createGrp(grpName, currentUser.id);
+        for (const id of memberIds) {
+            await addMember(id, group.id);
+        }
+        await loadContacts();
     }
 
     return (
@@ -80,8 +89,8 @@ export default function Chat() {
                                     onViewProfile={() => { setShowProfile(true) }}
                                 />
                             }
-                            {showCreateGroup && <CreateGroupModal onClose={() => setShowCreateGroup(false)}/>}
-                            {showProfile && <Profile user={currentUser} onClose={() => setShowProfile(false)}/>}
+                            {showCreateGroup && <CreateGroupModal contacts={contacts} onClose={() => setShowCreateGroup(false)} onCreateGrp={createGroup} />}
+                            {showProfile && <Profile user={currentUser} onClose={() => setShowProfile(false)} />}
                         </div>
                     )}
                     <ChatWindow currentUserId={currentUser?.id} messages={messages} />
