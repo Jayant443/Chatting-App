@@ -59,6 +59,9 @@ export default function Login() {
                     </div>
                     <button type="submit">Login</button>
                 </form>
+                <div className="form-section">
+                    <p>Don't have an account? <a href="/signup">SignUp</a> </p>
+                </div>
             </div>
         </>
     );
