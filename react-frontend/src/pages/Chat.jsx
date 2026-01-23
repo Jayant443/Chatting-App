@@ -85,8 +85,8 @@ export default function Chat() {
                             <button className="options-button" onClick={() => { setShowOptions(!showOptions) }}>⋮</button>
                             {showOptions &&
                                 <Options
-                                    onCreateGroup={() => { setShowCreateGroup(true) }}
-                                    onViewProfile={() => { setShowProfile(true) }}
+                                    onCreateGroup={() => { setShowCreateGroup(true); setShowProfile(false) }}
+                                    onViewProfile={() => { setShowProfile(true); setShowCreateGroup(false) }}
                                 />
                             }
                             {showCreateGroup && <CreateGroupModal contacts={contacts} onClose={() => setShowCreateGroup(false)} onCreateGrp={createGroup} />}

@@ -1,5 +1,6 @@
 import defaultAvatar from "../assets/default-profile-icon.jpg";
 import { useState } from "react";
+
 function CreateGroupModal({ contacts, onClose, onCreateGrp }) {
     const [selectedUsers, setSelectedUsers] = useState(new Set());
     const [grpName, setGrpName] = useState('');
@@ -36,14 +37,17 @@ function CreateGroupModal({ contacts, onClose, onCreateGrp }) {
                     {contacts.map((contact) => {
                         const userId = contact.id;
                         const isSelected = selectedUsers.has(userId);
-                        return (
-                            <>
-                                <button key={userId} className="menu-option" style={{ backgroundColor: isSelected ? '#209bcc' : '#383838' }} onClick={() => toggleSelectUser(contact.id)}>
-                                    <img src={defaultAvatar} className="avatar" />
-                                    <p>{contact?.contact?.username}</p>
-                                </button>
-                            </>
-                        );
+                        const isGroup = contact.type === "group";
+                        if (!isGroup) {
+                            return (
+                                <>
+                                    <button key={userId} className="menu-option" style={{ backgroundColor: isSelected ? '#209bcc' : '#383838' }} onClick={() => toggleSelectUser(contact.id)}>
+                                        <img src={defaultAvatar} className="avatar" />
+                                        <p>{contact?.contact?.username}</p>
+                                    </button>
+                                </>
+                            );
+                        }
                     })}
                 </div>
                 <button type="submit" id="create-group-btn" onClick={handleCreate}>Create</button>
