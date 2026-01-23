@@ -30,6 +30,6 @@ export const createGrp = async(grpName, userId) => {
 }
 
 export const addMember = async(memberId, chatId) => {
-    const response = await axios.post(`${chatRoute}/${chatId}/member`, {memberId}, config);
+    const response = await axios.post(`${chatRoute}/${chatId}/member`, {user_id: memberId}, config);
     return response.data;
 }

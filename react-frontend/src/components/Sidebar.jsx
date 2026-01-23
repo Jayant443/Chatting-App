@@ -16,7 +16,7 @@ function Sidebar({ contacts, onSelectChat }) {
                 {contacts.map((contact) => (<li key={contact.id} className="chat-item">
                     <img className="avatar" src={defaultAvatar} />
                     <div className="chat-info" onClick={() => onSelectChat(contact)}>
-                        <span className="chat-name">{contact?.contact?.username}</span>
+                        <span className="chat-name">{contact.type==="personal" ? contact?.contact?.username : contact.name}</span>
                         <span className="recent-msg">Click to contact</span>
                     </div>
                 </li>
