@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import "./Sidebar.css";
-import { addContactRoute } from '../services/routes';
+import { addContact } from '../services/chat';
 
 function NewContact({ onClose }) {
     const [email, setEmail] = useState("");
@@ -9,29 +8,11 @@ function NewContact({ onClose }) {
 
     async function handleSubmit(e) {
         e.preventDefault();
-        const token = localStorage.getItem("token");
-        const config = {
-            headers: {
-                "Authorization": `Bearer: ${token}`,
-                "Content-Type": "application/json"
-            }
-        };
         if (!email) {
             setError("Please enter an email!");
             return;
         }
-        try {
-            const res = await axios.post(
-            addContactRoute,
-            {email: email},
-            config
-        );
-        const data = res.data;
-        alert(`${data.name} is now a contact!`);
-        }
-        catch (err) {
-            setError(err.response?.data?.message || "Failed to add contact");
-        }
+        addContact(email);
     }
     return (
         <>

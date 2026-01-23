@@ -1,4 +1,4 @@
-import { chatRoute, getUserRoute } from "./routes";
+import { chatRoute, userRoute } from "./routes";
 import axios from "axios";
 
 
@@ -20,7 +20,7 @@ export const getMessages = async(chatId) => {
 }
 
 export const getCurrentUser = async() => {
-    const response = await axios.get(getUserRoute, config);
+    const response = await axios.get(`${userRoute}/users/me`, config);
     return response.data;
 }
 
@@ -31,5 +31,10 @@ export const createGrp = async(grpName, userId) => {
 
 export const addMember = async(memberId, chatId) => {
     const response = await axios.post(`${chatRoute}/${chatId}/member`, {user_id: memberId}, config);
+    return response.data;
+}
+
+export const addContact = async(email) => {
+    const response = await axios.post(`${chatRoute}/contact/add`, {email: email}, config);
     return response.data;
 }
