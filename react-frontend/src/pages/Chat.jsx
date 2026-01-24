@@ -1,7 +1,7 @@
 import Sidebar from "../components/Sidebar"
 import "./index.css";
-import { getContacts, getMessages, getCurrentUser, createGrp, addMember } from "../services/chat";
-import { useState, useEffect } from "react";
+import { getContacts, getMessages, getCurrentUser, createGrp, addMember, getWebSocketUrl } from "../services/chat";
+import { useState, useEffect, useRef } from "react";
 import ChatWindow from "../components/ChatWindow";
 import Options from "../components/Options";
 import Profile from "../components/Profile";
@@ -16,6 +16,7 @@ export default function Chat() {
     const [showOptions, setShowOptions] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [showCreateGroup, setShowCreateGroup] = useState(false);
+    const webSocketRef = useRef(null);
 
     useEffect(() => {
         loadContacts();
@@ -29,6 +30,19 @@ export default function Chat() {
         }
         if (currentChat?.id) {
             loadMessages();
+            connectWebsocket(currentChat.id);
+        }
+
+        return () => {
+            if (webSocketRef.current) {
+                try {
+                    webSocketRef.current.close();
+                }
+                catch (err) {
+                    console.log("Error closing websocket:", err);
+                }
+                webSocketRef.current = null;
+            }
         }
     }, [currentChat]);
 
@@ -73,6 +87,46 @@ export default function Chat() {
         await loadContacts();
     }
 
+    function connectWebsocket(chatId) {
+        if (webSocketRef.current) {
+            try {
+                webSocketRef.current.close();
+            }
+            catch (err) {
+                console.log("Error closing previous websocket:", err);
+            }
+            webSocketRef.current = null;
+        }
+
+        const ws = new WebSocket(getWebSocketUrl(chatId));
+
+        ws.onopen = () => {
+            console.log(`Connected to chat: ${chatId}`);
+        }
+
+        ws.onmessage = (event) => {
+            try {
+                const msg = JSON.parse(event.data);
+                setMessages((prev) => [...prev, msg]);
+            }
+            catch(err) {
+                console.log("Invalid message data: ", err);
+            }
+        }
+
+        ws.onclose = () => {
+            console.log("websockets closed");
+        }
+
+        webSocketRef.current = ws;
+    }
+
+    function sendMsg(msg) {
+        if (webSocketRef.current?.readyState===WebSocket.OPEN && msg.trim()) {
+            webSocketRef.current.send(msg);
+        }
+    }
+
     return (
         <>
             <div className="chat-app">
@@ -93,7 +147,7 @@ export default function Chat() {
                             {showProfile && <Profile user={currentUser} onClose={() => setShowProfile(false)} />}
                         </div>
                     )}
-                    <ChatWindow currentUserId={currentUser?.id} messages={messages} />
+                    <ChatWindow currentUserId={currentUser?.id} messages={messages} onSendMsg={sendMsg}/>
                 </div>
             </div>
         </>

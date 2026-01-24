@@ -41,3 +41,8 @@ export const addContact = async(email) => {
     const response = await axios.post(`${chatRoute}/contact/add`, {email: email}, getConfig());
     return response.data;
 }
+
+export const getWebSocketUrl = (chatId) => {
+    const token = localStorage.getItem("token");
+    return `ws://127.0.0.1:8000/chats/ws/${chatId}?token=${token}`;
+};
