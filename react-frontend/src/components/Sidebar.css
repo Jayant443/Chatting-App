@@ -11,6 +11,7 @@
   font-size: 1.5rem;
   font-weight: 600;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: space-between;
   font-family: Arial, Helvetica, sans-serif;
@@ -19,42 +20,6 @@
   height: 60px;
   color: #ffffff;
   border-bottom: 1px solid #2c2c2c;
-  text-align: center;
-}
-
-.sidebar .add-contact-form {
-  padding: 3%;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #0d0d0d;
-  border-bottom: 1px solid #2c2c2c;
-  height: 7%;
-}
-
-#add-contact-input {
-  background-color: #2e2e2e;
-  border: none;
-  font-size: 110%;
-  color: rgb(196, 196, 196);
-  height: 100%;
-  width: 70%;
-  padding: 1%;
-}
-
-#add-contact-submit-btn {
-  background-color: #1a7ca3;
-  border: none;
-  font-size: 110%;
-  width: 20%;
-  height: 100%;
-  border-radius: 9px;
-}
-
-#add-contact-submit-btn:hover {
-  background-color: #1e98c9;
-}
-#add-contact-submit-btn:active {
-  background-color: #1d6683;
 }
 
 .chat-list {
@@ -67,9 +32,11 @@
 .chat-list::-webkit-scrollbar {
   width: 8px;
 }
+
 .chat-list::-webkit-scrollbar-track {
   background: #1e1e1e;
 }
+
 .chat-list::-webkit-scrollbar-thumb {
   background-color: #444;
   border-radius: 4px;

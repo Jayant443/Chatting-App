@@ -6,6 +6,7 @@ import ChatWindow from "../components/ChatWindow";
 import Options from "../components/Options";
 import Profile from "../components/Profile";
 import CreateGroupModal from "../components/CreateGroupModal";
+import NewContact from "../components/NewContact";
 import defaultAvatar from "../assets/default-profile-icon.jpg";
 
 export default function Chat() {
@@ -16,6 +17,7 @@ export default function Chat() {
     const [showOptions, setShowOptions] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [showCreateGroup, setShowCreateGroup] = useState(false);
+    const [showNewContactForm, setShowNewContactForm] = useState(false);
     const webSocketRef = useRef(null);
 
     useEffect(() => {
@@ -139,10 +141,12 @@ export default function Chat() {
                             <button className="options-button" onClick={() => { setShowOptions(!showOptions) }}>⋮</button>
                             {showOptions &&
                                 <Options
-                                    onCreateGroup={() => { setShowCreateGroup(true); setShowProfile(false) }}
-                                    onViewProfile={() => { setShowProfile(true); setShowCreateGroup(false) }}
+                                    onCreateGroup={() => { setShowCreateGroup(true); setShowProfile(false); setShowNewContactForm(false) }}
+                                    onViewProfile={() => { setShowProfile(true); setShowCreateGroup(false); setShowNewContactForm(false) }}
+                                    onNewContact={() => { setShowNewContactForm(true); setShowCreateGroup(false); setShowProfile(false)}}
                                 />
                             }
+                            { showNewContactForm && (<NewContact onClose={() => setShowNewContactForm(false)} />)}
                             {showCreateGroup && <CreateGroupModal contacts={contacts} onClose={() => setShowCreateGroup(false)} onCreateGrp={createGroup} />}
                             {showProfile && <Profile user={currentUser} onClose={() => setShowProfile(false)} />}
                         </div>

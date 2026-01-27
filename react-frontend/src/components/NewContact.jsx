@@ -12,15 +12,19 @@ function NewContact({ onClose }) {
             setError("Please enter an email!");
             return;
         }
-        addContact(email);
+        await addContact(email);
+        setEmail("");
+        onClose();
     }
     return (
         <>
-            <div className="add-contact-form">
-                <input id="add-contact-input" type="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} value={email}/>
-                <p>{error}</p>
-                <button type="submit" id="add-contact-submit-btn" onClick={handleSubmit}>Add</button>
-                <button onClick={onClose}>Cancel</button>
+            <div className='modal-backdrop'>
+                <div className="add-contact-form">
+                    <input id="add-contact-input" type="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} value={email} />
+                    <p className='error'>{error}</p>
+                    <button type="submit" id="add-contact-submit-btn" onClick={handleSubmit}>Add</button>
+                    <button id="close" onClick={onClose}>Cancel</button>
+                </div>
             </div>
         </>
     );

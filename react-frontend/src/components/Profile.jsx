@@ -1,15 +1,17 @@
-function Profile({user, onClose}) {
+function Profile({ user, onClose }) {
     return (
         <>
-            <div className="profile">
-                <h3>Profile</h3>
-                <div className="profile-details">
-                    <p>Username: <span id="profile-username">{user.username}</span></p>
-                    <p>Email: <span id="profile-email">{user.email}</span></p>
-                    <p>Joined: <span id="profile-join-date">{user.created_at}</span></p>
+            <div className="modal-backdrop">
+                <div className="profile">
+                    <h3>Profile</h3>
+                    <div className="profile-details">
+                        <p><span className="label">Username:</span><span className="value">{user.username}</span></p>
+                        <p><span className="label">Email:</span><span className="value">{user.email}</span></p>
+                        <p><span className="label">Joined:</span><span className="value">{user.created_at}</span></p>
+                    </div>
+                    <button id="update-profile-btn">Update Profile</button>
+                    <button onClick={onClose}>x</button>
                 </div>
-                <button id="update-profile-btn">Update Profile</button>
-                <button onClick={onClose}>x</button>
             </div>
         </>
     )
