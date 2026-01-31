@@ -4,7 +4,7 @@ import { signupRoute } from "../services/routes";
 import { useNavigate } from "react-router-dom";
 import "./login.css";
 
-export default  function Signup() {
+function Signup() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         username: "",
@@ -59,3 +59,5 @@ export default  function Signup() {
         </>
     );
 }
+
+export default Signup;

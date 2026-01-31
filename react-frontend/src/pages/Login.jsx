@@ -4,7 +4,7 @@ import { loginRoute } from "../services/routes";
 import axios from "axios";
 import "./login.css";
 
-export default function Login() {
+function Login() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState(
         {
@@ -66,3 +66,5 @@ export default function Login() {
         </>
     );
 }
+
+export default Login;

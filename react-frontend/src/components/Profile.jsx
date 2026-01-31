@@ -10,7 +10,7 @@ function Profile({ user, onClose }) {
                         <p><span className="label">Joined:</span><span className="value">{user.created_at}</span></p>
                     </div>
                     <button id="update-profile-btn">Update Profile</button>
-                    <button onClick={onClose}>x</button>
+                    <button onClick={onClose}>Close</button>
                 </div>
             </div>
         </>

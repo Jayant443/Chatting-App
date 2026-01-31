@@ -396,9 +396,10 @@ body {
 .chat-container .chat-title .options-button {
   background: none;
   border: none;
-  font-size: 26px;
+  font-size: 20px;
   cursor: pointer;
   color: #ffffff;
+  text-align: center;
   border-radius: 20%;
   margin-left: auto;
   width: 32px;
@@ -500,6 +501,7 @@ body {
   border-top: 1px solid #2c2c2c;
   gap: 10px;
   align-items: center;
+  position: relative;
 }
 
 .chat-input .emoji {
@@ -522,6 +524,12 @@ body {
 
 .chat-input .emoji:hover {
   background-color: #383838;
+}
+
+.chat-input .emoji-picker {
+  position: absolute;
+  bottom: 100%;
+  margin-bottom: 10px;
 }
 
 .chat-input input {

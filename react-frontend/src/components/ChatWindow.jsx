@@ -1,10 +1,16 @@
 import Message from "./Message";
 import emojiImg from "../assets/emoji-icon-image.png";
 import { useState, useRef, useEffect } from "react";
+import EmojiPicker from "emoji-picker-react";
 
 function ChatWindow({ currentUserId, messages, onSendMsg }) {
     const [inputMsg, setInputMsg] = useState("");
+    const [showPicker, setShowPicker] = useState(false);
     const messagesEndRef = useRef(null);
+
+    const onEmojiClick = (emojiData) => {
+        setInputMsg((prev) => prev + emojiData.emoji);
+    }
 
     function scrollToBottom() {
         messagesEndRef.current?.scrollIntoView();
@@ -36,7 +42,8 @@ function ChatWindow({ currentUserId, messages, onSendMsg }) {
             <div ref={messagesEndRef} />
             </div>
             <div className="chat-input" id="chat-input">
-                <button className="emoji"><img src={emojiImg} /></button>
+            {showPicker && <div className="emoji-picker"><EmojiPicker onEmojiClick={onEmojiClick}/></div>}
+                <button className="emoji" onClick={() => setShowPicker(!showPicker)}><img src={emojiImg} /></button>
                 <input id="message-input" type="text" placeholder="Type a message" onChange={(e) => {setInputMsg(e.target.value)}} onKeyPress={handleKeyPress} value={inputMsg}/>
                 <button className="send-btn" onClick={handleSendMsg} >Send</button>
             </div>

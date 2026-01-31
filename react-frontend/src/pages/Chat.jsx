@@ -2,6 +2,7 @@ import Sidebar from "../components/Sidebar"
 import "./index.css";
 import { getContacts, getMessages, getCurrentUser, createGrp, addMember, getWebSocketUrl } from "../services/chat";
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import ChatWindow from "../components/ChatWindow";
 import Options from "../components/Options";
 import Profile from "../components/Profile";
@@ -9,7 +10,7 @@ import CreateGroupModal from "../components/CreateGroupModal";
 import NewContact from "../components/NewContact";
 import defaultAvatar from "../assets/default-profile-icon.jpg";
 
-export default function Chat() {
+function Chat() {
     const [contacts, setContacts] = useState([]);
     const [currentChat, setCurrentChat] = useState(null);
     const [currentUser, setCurrentUser] = useState(null);
@@ -19,6 +20,7 @@ export default function Chat() {
     const [showCreateGroup, setShowCreateGroup] = useState(false);
     const [showNewContactForm, setShowNewContactForm] = useState(false);
     const webSocketRef = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         loadContacts();
@@ -129,6 +131,11 @@ export default function Chat() {
         }
     }
 
+    function logout() {
+        localStorage.removeItem("token");
+        navigate("/login", {replace: true});
+    }
+
     return (
         <>
             <div className="chat-app">
@@ -144,11 +151,12 @@ export default function Chat() {
                                     onCreateGroup={() => { setShowCreateGroup(true); setShowProfile(false); setShowNewContactForm(false) }}
                                     onViewProfile={() => { setShowProfile(true); setShowCreateGroup(false); setShowNewContactForm(false) }}
                                     onNewContact={() => { setShowNewContactForm(true); setShowCreateGroup(false); setShowProfile(false)}}
+                                    onLogout={logout}
                                 />
                             }
+                            {showProfile && <Profile user={currentUser} onClose={() => setShowProfile(false)} />}
                             { showNewContactForm && (<NewContact onClose={() => setShowNewContactForm(false)} />)}
                             {showCreateGroup && <CreateGroupModal contacts={contacts} onClose={() => setShowCreateGroup(false)} onCreateGrp={createGroup} />}
-                            {showProfile && <Profile user={currentUser} onClose={() => setShowProfile(false)} />}
                         </div>
                     )}
                     <ChatWindow currentUserId={currentUser?.id} messages={messages} onSendMsg={sendMsg}/>
@@ -157,3 +165,5 @@ export default function Chat() {
         </>
     )
 }
+
+export default Chat;
